@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { menuItems } from './data/menu';
-import FoodCard from './components/FoodCard';
-import { FoodItem } from './components/FoodCard';
+import { menuItems } from '../data/menu';
+import FoodCard from '../components/FoodCard';
+import { FoodItem } from '../components/FoodCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import Sidebar from './components/Sidebar';
+import Sidebar from '../components/Sidebar';
 
 export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);

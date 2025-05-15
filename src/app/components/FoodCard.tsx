@@ -28,7 +28,7 @@ export default function FoodCard({
   return (
     <button
       onClick={() => onSelect(item)}
-      className={`rounded-lg transition transform p-4 text-left w-full
+      className={`rounded-lg transition transform p-4 text-left w-full min-h-[320px] flex flex-col text-black
         ${item.available ? 'bg-white' : 'bg-gray-300'}
         ${item.available ? 'hover:scale-105' : ''}
         shadow-sm hover:shadow-md`}

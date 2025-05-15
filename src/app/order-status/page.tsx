@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { menuItems } from './data/menu';
-import FoodCard from './components/FoodCard';
-import { FoodItem } from './components/FoodCard';
+import { menuItems } from '../data/menu';
+import FoodCard from '../components/FoodCard';
+import { FoodItem } from '../components/FoodCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import Sidebar from './components/Sidebar';
+import Sidebar from '../components/Sidebar';
 
 export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
@@ -15,7 +15,7 @@ export default function HomePage() {
 
   const filteredItems = filter === 'All'
     ? menuItems
-    : menuItems.filter(item => item.category === filter);
+    : menuItems.filter(item => item.status === filter);
 
   // Reset quantity when selectedItem changes
   function handleSelect(item: FoodItem) {
@@ -70,21 +70,21 @@ export default function HomePage() {
             onClick={() => setFilter('All')}
           >All</button>
           <button
-            className={`px-3 py-1 rounded ${filter === 'Coffee' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
-            onClick={() => setFilter('Coffee')}
-          >Coffee</button>
+            className={`px-3 py-1 rounded ${filter === 'Preparing' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
+            onClick={() => setFilter('Preparing')}
+          >Preparing</button>
           <button
-            className={`px-3 py-1 rounded ${filter === 'Non-Coffee' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
-            onClick={() => setFilter('Non-Coffee')}
-          >Non-Coffee</button>
+            className={`px-3 py-1 rounded ${filter === 'Ready to serve' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
+            onClick={() => setFilter('Ready to serve')}
+          >Ready to serve</button>
           <button
-            className={`px-3 py-1 rounded ${filter === 'Appetizer' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
-            onClick={() => setFilter('Appetizer')}
-          >Appetizer</button>
+            className={`px-3 py-1 rounded ${filter === 'Served' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
+            onClick={() => setFilter('Served')}
+          >Served</button>
           <button
-            className={`px-3 py-1 rounded ${filter === 'Dessert' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
-            onClick={() => setFilter('Dessert')}
-          >Dessert</button>
+            className={`px-3 py-1 rounded ${filter === 'Cancel' ? 'bg-purple-100 text-[#7e57c2]' : 'bg-gray-200 text-black'} hover:bg-gray-300`}
+            onClick={() => setFilter('Cancel')}
+          >Cancel</button>
         </div>
 
         {/* Food Menu */}
