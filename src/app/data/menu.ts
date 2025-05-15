@@ -8,6 +8,7 @@ export type FoodItem = {
   image: string;
   category: string;
   status: string;
+  paystatus: string;
 };
 
 export const menuItems: FoodItem[] = [
@@ -19,6 +20,7 @@ export const menuItems: FoodItem[] = [
     image: '/Noodles.jpg',
     category: 'Appetizer',
     status: 'Preparing',
+    paystatus: 'payable', 
   },
   {
     id: 2,
@@ -28,6 +30,7 @@ export const menuItems: FoodItem[] = [
     image: '/pasta.jpg',
     category: 'Non-Coffee',
     status: 'Cancel',
+    paystatus: 'cancel', // Cancel = cancel
   },
   {
     id: 3,
@@ -37,6 +40,7 @@ export const menuItems: FoodItem[] = [
     image: '/beef.jpg',
     category: 'Appetizer',
     status: 'Ready to serve',
+    paystatus: 'payable', // Ready to serve = payable
   },
   {
     id: 4,
@@ -46,6 +50,7 @@ export const menuItems: FoodItem[] = [
     image: '/americano.jpg',
     category: 'Coffee',
     status: 'Served',
+    paystatus: 'payable',
   },
   {
     id: 5,
@@ -55,6 +60,7 @@ export const menuItems: FoodItem[] = [
     image: '/latte.jpg',
     category: 'Coffee',
     status: 'Preparing',
+    paystatus: 'payable',
   },
   {
     id: 6,
@@ -64,6 +70,7 @@ export const menuItems: FoodItem[] = [
     image: '/lemontea.jpg',
     category: 'Non-Coffee',
     status: 'Ready to serve',
+    paystatus: 'payable',
   },
   {
     id: 7,
@@ -73,6 +80,7 @@ export const menuItems: FoodItem[] = [
     image: '/chocolate-cake.jpg',
     category: 'Dessert',
     status: 'Served',
+    paystatus: 'paid',
   },
   {
     id: 8,
@@ -82,6 +90,7 @@ export const menuItems: FoodItem[] = [
     image: '/strawberry-cheesecake.jpg',
     category: 'Dessert',
     status: 'Cancel',
+    paystatus: 'cancel',
   },
   {
     id: 9,
@@ -91,5 +100,6 @@ export const menuItems: FoodItem[] = [
     image: '/strawberry-cheesecake.jpg',
     category: 'Dessert',
     status: 'Preparing',
+    paystatus: 'cancel',
   },
 ];

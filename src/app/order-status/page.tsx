@@ -106,29 +106,29 @@ export default function HomePage() {
               </div>
               <h2 className="text-black font-bold text-center">{selectedItem.name}</h2>
               <p className="text-gray-700 mt-1 text-center">Price : {selectedItem.price}</p>
-              <div className="mt-4 flex items-center justify-center space-x-6">
-                <button
-                  className="w-8 h-8 flex items-center justify-center border border-black rounded-full text-black disabled:opacity-30"
-                  onClick={handleDecrease}
-                  disabled={!selectedItem.available || quantity <= 1}
-                >-</button>
-                <span className="text-black text-xl">{quantity}</span>
-                <button
-                  className="w-8 h-8 flex items-center justify-center border border-black rounded-full text-black disabled:opacity-30"
-                  onClick={handleIncrease}
-                  disabled={!selectedItem.available}
-                >+</button>
-              </div>
+              <p className="text-black mt-1 text-center">Amount : {quantity}</p>
               <input
                 type="text"
-                placeholder="More details"
-                className="mt-6 w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none text-center enabled:text-black"
+                placeholder="Your details :"
+                className="mt-6 w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none text-left text-black bg-gray-100"
+                disabled
               />
               <button
-                className="mt-4 px-6 py-2 bg-[#7e57c2] text-white rounded-full hover:bg-[#6c47b6]"
-                disabled={!selectedItem.available}
+                className={`mt-8 px-10 py-2 rounded-full text-lg font-semibold
+                  ${
+                    selectedItem.status === 'Preparing'
+                      ? 'bg-[#b3a04c] text-white'
+                      : selectedItem.status === 'Ready to serve'
+                      ? 'bg-blue-400 text-white'
+                      : selectedItem.status === 'Served'
+                      ? 'bg-green-500 text-white'
+                      : selectedItem.status === 'Cancel'
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gray-300 text-black'
+                  }`}
+                disabled
               >
-                Add
+                {selectedItem.status}
               </button>
             </div>
           ) : (
