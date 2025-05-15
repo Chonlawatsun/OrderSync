@@ -64,8 +64,12 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col items-end">
               <span className="font-bold text-black">Customer</span>
-              <div className="flex items-center space-x-2 mt-1">
-                <img src="/customer-avatar.png" alt="Customer" className="w-8 h-8 rounded-full" />
+              <div className="flex items-top space-x-2 mt-1">
+                <img src="/customer-avatar.png" 
+                alt="Customer" 
+                width={56}
+                height={56}
+                className="-mt-6 rounded-full" />
                 <span className="text-black">Table : 00</span>
               </div>
             </div>
