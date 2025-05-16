@@ -44,7 +44,7 @@ export default function HomePage() {
 
     const data = await res.json()
 
-    if (data.role === 'ADMIN') {
+    if (data.user.role === 'ADMIN') {
       router.push('/admin')
     } else if (data.role === 'STAFF') {
       router.push('/WaitStaff')
