@@ -8,19 +8,21 @@ export default function AddMenuPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [available, setAvailable] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile) {
-      alert('Please select an image file');
+    if (!imageFile || !category) {
+      alert('Please select an image file and category');
       return;
     }
 
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
+    formData.append('category', category);
     formData.append('available', available ? 'true' : 'false');
     formData.append('image', imageFile);
 
@@ -39,8 +41,7 @@ export default function AddMenuPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-8">
-
-         {/* ปุ่มย้อนกลับ */}
+        {/* ปุ่มย้อนกลับ */}
         <button
           type="button"
           onClick={() => router.push('/admin')}
@@ -53,7 +54,7 @@ export default function AddMenuPage() {
         <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">Add menu item</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-gray-700 font-semibold mb-1">menu name</label>
+            <label className="block text-gray-700 font-semibold mb-1">Menu name</label>
             <input
               type="text"
               value={name}
@@ -75,6 +76,23 @@ export default function AddMenuPage() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7e57c2]"
               placeholder="e.g., 100.00"
             />
+          </div>
+
+          {/* 🆕 เพิ่มหมวดหมู่ */}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Category</label>
+            <select
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7e57c2]"
+            >
+              <option value="">Select category</option>
+              <option value="Coffee">Coffee</option>
+              <option value="Non-Coffee">Non-Coffee</option>
+              <option value="Appetizer">Appetizer</option>
+              <option value="Dessert">Dessert</option>
+            </select>
           </div>
 
           <div>

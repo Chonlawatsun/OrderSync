@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Sidebar from '@/app/components/SidebarAdmin'; // เปลี่ยนตรงนี้ให้ตรง path ที่คุณใช้จริง
 
+
 type MenuItem = {
   id: number;
   name: string;
@@ -16,6 +17,7 @@ type MenuItem = {
 export default function AdminPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     fetchMenu();
@@ -91,18 +93,22 @@ export default function AdminPage() {
                   </span>
                 </td>
                 <td className="px-4 py-2 space-x-2">
-                  <Link href={`/admin/edit/${item.id}`}>
-                    <button className="text-sm bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                      ✏️ Edit
-                    </button>
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                  >
-                    🗑 Delete
-                  </button>
-                </td>
+  <Link href={`/admin/edit/${item.id}`}>
+    <button
+      className="text-sm bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+      type="button"
+    >
+      ✏️ Edit
+    </button>
+  </Link>
+  <button
+    onClick={() => handleDelete(item.id)}
+    className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+  >
+    🗑 Delete
+  </button>
+</td>
+
               </tr>
             ))}
           </tbody>
