@@ -17,9 +17,9 @@ export default function Sidebar() {
         <h1 className="text-2xl font-bold mb-6">OrderSync</h1>
         <nav className="space-y-4">
           <Link
-            href="/"
+            href="/menu"
             className={`block w-full text-left px-3 py-2 rounded transition
-              ${pathname === '/' 
+              ${pathname === '/menu' 
                 ? 'bg-white text-[#7e57c2] shadow font-bold' 
                 : 'hover:bg-[#7e57c2] hover:shadow-lg hover:shadow-black/20'}`}
           >
