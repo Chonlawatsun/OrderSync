@@ -22,7 +22,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🍽 Admin: Manage Menu</h1>
+        <h1 className="text-2xl font-bold">Admin: Manage Menu</h1>
         <Link href="/admin/new">
           <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             ➕ Add New
