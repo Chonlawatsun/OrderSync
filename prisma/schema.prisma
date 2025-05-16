@@ -17,6 +17,16 @@ model User {
   createdAt DateTime @default(now())
 }
 
+model MenuItem {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Int
+  image     String
+  available Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Role {
   ADMIN
   STAFF
