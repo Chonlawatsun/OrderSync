@@ -17,11 +17,11 @@ export default function Sidebar() {
         <h1 className="text-2xl font-bold mb-6">OrderSync</h1>
         <nav className="space-y-4">
           <Link
-            href="/"
+            href="/menu"
             className={`block w-full text-left px-3 py-2 rounded transition
-              ${pathname === '/' 
+              ${pathname === '/menu' 
                 ? 'bg-white text-[#7e57c2] shadow font-bold' 
-                : 'hover:bg-[#7e57c2] hover:shadow-lg hover:shadow-black/20'}`}
+                : 'hover:bg-[#967dc2] hover:shadow-lg hover:shadow-black/20'}`}
           >
             <FontAwesomeIcon icon={faUtensils} className="mr-2" />
             Menu
@@ -31,7 +31,7 @@ export default function Sidebar() {
             className={`block w-full text-left px-3 py-2 rounded transition
               ${pathname === '/order-status' 
                 ? 'bg-white text-[#7e57c2] shadow font-bold' 
-                : 'hover:bg-[#7e57c2] hover:shadow-lg hover:shadow-black/20'}`}
+                : 'hover:bg-[#967dc2] hover:shadow-lg hover:shadow-black/20'}`}
           >
             <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
             Order Status
@@ -41,7 +41,7 @@ export default function Sidebar() {
             className={`block w-full text-left px-3 py-2 rounded transition
               ${pathname === '/payment' 
                 ? 'bg-white text-[#7e57c2] shadow font-bold' 
-                : 'hover:bg-[#7e57c2] hover:shadow-lg hover:shadow-black/20'}`}
+                : 'hover:bg-[#967dc2] hover:shadow-lg hover:shadow-black/20'}`}
           >
             <FontAwesomeIcon icon={faCreditCard} className="mr-2" />
             Payment
