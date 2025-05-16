@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id       String   @id @default(uuid())
+  username String   @unique
+  password String
+  role     Role
+  createdAt DateTime @default(now())
+}
+
+model MenuItem {
+  id          String   @id @default(uuid()) // เปลี่ยนจาก Int เป็น String และใช้ uuid
+  name        String
+  price       Int
+  category    String?  // เพิ่ม category แบบ nullable
+  available   Boolean  @default(true)
+  image       String?  // เปลี่ยนเป็น nullable
+  description String?  // เพิ่ม description แบบ nullable
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}

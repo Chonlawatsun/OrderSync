@@ -1,28 +1,53 @@
-// src/app/admin/page.tsx
-
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-import { menuItems as initialMenu } from '../data/menu';
-
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-export default function AdminPage() {
-  const [menuItems, setMenuItems] = useState(initialMenu);
- 
+type MenuItem = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  available: boolean;
+};
 
-  const handleDelete = (id: number) => {
+export default function AdminPage() {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchMenu();
+  }, []);
+
+  async function fetchMenu() {
+    setLoading(true);
+    const res = await fetch('/api/menu');
+    if (res.ok) {
+      const data = await res.json();
+      setMenuItems(data);
+    }
+    setLoading(false);
+  }
+
+  const handleDelete = async (id: number) => {
     const confirmed = confirm('Are you sure you want to delete this menu item?');
-    if (confirmed) {
+    if (!confirmed) return;
+
+    const res = await fetch(`/api/menu/${id}`, { method: 'DELETE' });
+    if (res.ok) {
       setMenuItems(menuItems.filter(item => item.id !== id));
+    } else {
+      alert('ลบเมนูไม่สำเร็จ');
     }
   };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🍽 Admin: Manage Menu</h1>
+        <h1 className="text-2xl font-bold">Admin: Manage Menu</h1>
         <Link href="/admin/new">
           <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             ➕ Add New
@@ -45,12 +70,12 @@ export default function AdminPage() {
             <tr key={item.id} className="border-t hover:bg-gray-50">
               <td className="px-4 py-2">
                 <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={64}
-                    height={64}
-                    className="rounded object-cover"
-                    />
+                  src={item.image}
+                  alt={item.name}
+                  width={64}
+                  height={64}
+                  className="rounded object-cover"
+                />
               </td>
               <td className="px-4 py-2">{item.name}</td>
               <td className="px-4 py-2">{item.price} THB</td>

@@ -1,105 +1,50 @@
-// src/app/data/menu.ts
-
-export type FoodItem = {
-  id: number;
+export interface FoodItem {
+  id: string;
   name: string;
   price: number;
+  category: string | null;
   available: boolean;
-  image: string;
-  category: string;
-  status: string;
-  paystatus: string;
-};
+  image: string | null;
+  description: string | null;
+}
 
-export const menuItems: FoodItem[] = [
-  {
-    id: 1,
-    name: 'Spicy seasoned seafood noodles',
-    price: 200,
-    available: true,
-    image: '/Noodles.jpg',
-    category: 'Appetizer',
-    status: 'Preparing',
-    paystatus: 'payable', 
-  },
-  {
-    id: 2,
-    name: 'Salted Pasta with mushroom sauce',
-    price: 200,
-    available: false,
-    image: '/pasta.jpg',
-    category: 'Non-Coffee',
-    status: 'Cancel',
-    paystatus: 'cancel', // Cancel = cancel
-  },
-  {
-    id: 3,
-    name: 'Beef dumpling in hot and sour soup',
-    price: 200,
-    available: true,
-    image: '/beef.jpg',
-    category: 'Appetizer',
-    status: 'Ready to serve',
-    paystatus: 'payable', // Ready to serve = payable
-  },
-  {
-    id: 4,
-    name: 'Americano',
-    price: 80,
-    available: true,
-    image: '/americano.jpg',
-    category: 'Coffee',
-    status: 'Served',
-    paystatus: 'payable',
-  },
-  {
-    id: 5,
-    name: 'Latte',
-    price: 90,
-    available: true,
-    image: '/latte.jpg',
-    category: 'Coffee',
-    status: 'Preparing',
-    paystatus: 'payable',
-  },
-  {
-    id: 6,
-    name: 'Iced Lemon Tea',
-    price: 70,
-    available: true,
-    image: '/lemontea.jpg',
-    category: 'Non-Coffee',
-    status: 'Ready to serve',
-    paystatus: 'payable',
-  },
-  {
-    id: 7,
-    name: 'Chocolate Cake',
-    price: 120,
-    available: true,
-    image: '/chocolate-cake.jpg',
-    category: 'Dessert',
-    status: 'Served',
-    paystatus: 'paid',
-  },
-  {
-    id: 8,
-    name: 'Strawberry Cheesecake',
-    price: 130,
-    available: false,
-    image: '/strawberry-cheesecake.jpg',
-    category: 'Dessert',
-    status: 'Cancel',
-    paystatus: 'cancel',
-  },
-  {
-    id: 9,
-    name: 'Cheesecake',
-    price: 130,
-    available: false,
-    image: '/strawberry-cheesecake.jpg',
-    category: 'Dessert',
-    status: 'Preparing',
-    paystatus: 'cancel',
-  },
-];
+// แปลง response ให้เป็น FoodItem
+function mapToFoodItem(item: any): FoodItem {
+  return {
+    id: String(item.id),
+    name: item.name,
+    price: Number(item.price),
+    category: item.category ?? null,
+    available: Boolean(item.available),
+    image: item.image ?? null,
+    description: item.description ?? null,
+  };
+}
+
+// ตัวอย่างการใช้งานกับ fetchMenuById
+async function fetchMenuById(id: string): Promise<FoodItem | null> {
+  try {
+    const response = await fetch(`http://localhost:3000/api/menu/${id}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return mapToFoodItem(data);
+  } catch (error) {
+    console.error('Error fetching menu:', error);
+    return null;
+  }
+}
+
+// ตัวอย่างการใช้งานกับ fetchMenuItems (array)
+export async function fetchMenuItems(): Promise<FoodItem[]> {
+  try {
+    const response = await fetch('http://localhost:3000/api/menu');
+    if (!response.ok) throw new Error('Network response was not ok');
+    const data = await response.json();
+    return data.map(mapToFoodItem);
+  } catch (error) {
+    console.error('Error fetching menu items:', error);
+    return [];
+  }
+}

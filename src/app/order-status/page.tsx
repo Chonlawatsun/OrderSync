@@ -1,34 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { menuItems } from '../data/menu';
+import { useState, useEffect } from 'react';
+import { fetchMenuItems } from '../data/menu'; // เปลี่ยนจาก menuItems เป็น fetchMenuItems
 import FoodCard from '../components/FoodCard';
-import { FoodItem } from '../components/FoodCard';
+import type { FoodItem } from '../data/menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
 
 export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
   const [filter, setFilter] = useState<string>('All');
   const [quantity, setQuantity] = useState<number>(1);
+  const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
+
+  useEffect(() => {
+    fetchMenuItems().then(setMenuItems);
+  }, []);
 
   const filteredItems = filter === 'All'
     ? menuItems
     : menuItems.filter(item => item.status === filter);
 
-  // Reset quantity when selectedItem changes
   function handleSelect(item: FoodItem) {
     setSelectedItem(item);
     setQuantity(1);
-  }
-
-  function handleIncrease() {
-    if (selectedItem?.available) setQuantity(q => q + 1);
-  }
-
-  function handleDecrease() {
-    if (selectedItem?.available && quantity > 1) setQuantity(q => q - 1);
   }
 
   return (
@@ -106,7 +102,7 @@ export default function HomePage() {
           {selectedItem ? (
             <div className="flex flex-col items-center w-full">
               <div className="relative w-40 h-40 mb-4 rounded-full overflow-hidden">
-                <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-full object-cover" />
+                <img src={selectedItem.image ?? '/no-image.png'} alt={selectedItem.name} className="w-full h-full object-cover" />
               </div>
               <h2 className="text-black font-bold text-center">{selectedItem.name}</h2>
               <p className="text-gray-700 mt-1 text-center">Price : {selectedItem.price}</p>

@@ -1,10 +1,10 @@
 'use client';
 
 import toast, { Toaster } from 'react-hot-toast';
-import { useState } from 'react';
-import { menuItems } from '../data/menu';
+import { useState, useEffect } from 'react';
+import { fetchMenuItems } from '../data/menu'; // เปลี่ยนจาก menuItems เป็น fetchMenuItems
 import FoodCard from '../components/FoodCard';
-import { FoodItem } from '../components/FoodCard';
+import type { FoodItem } from '../data/menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
@@ -13,6 +13,11 @@ export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
   const [filter, setFilter] = useState<string>('payable');
   const [selectedPayment, setSelectedPayment] = useState<string>('');
+  const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
+
+  useEffect(() => {
+    fetchMenuItems().then(setMenuItems);
+  }, []);
 
   // filter เมนูด้วย paystatus
   const filteredItems = filter === 'All'
@@ -31,7 +36,6 @@ export default function HomePage() {
     { label: 'Cash', img: '/cash.png' },
   ];
 
-  // Reset quantity when selectedItem changes
   function handleSelect(item: FoodItem) {
     setSelectedItem(item);
   }
