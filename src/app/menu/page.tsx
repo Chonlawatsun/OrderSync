@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { menuItems } from '../data/menu';
+import { fetchMenuItems } from '../data/menu'; // เปลี่ยนจาก menuItems เป็น fetchMenuItems
+import type { FoodItem } from '../data/menu';
 import FoodCard from '../components/FoodCard';
-import { FoodItem } from '../components/FoodCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../components/Sidebar';
@@ -22,6 +22,11 @@ export default function HomePage() {
   const searchParams = useSearchParams()
   const customerName = searchParams.get('name') || 'ลูกค้า'
   const tableNumber = searchParams.get('table') || 'ไม่ระบุ'
+  const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
+
+  useEffect(() => {
+    fetchMenuItems().then(setMenuItems);
+  }, []);
 
   useEffect(() => {
     if (page > 1 && (page - 1) * ordersPerPage >= orders.length) {

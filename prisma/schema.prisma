@@ -18,13 +18,15 @@ model User {
 }
 
 model MenuItem {
-  id        Int      @id @default(autoincrement())
-  name      String
-  price     Int
-  image     String
-  available Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid()) // เปลี่ยนจาก Int เป็น String และใช้ uuid
+  name        String
+  price       Int
+  category    String?  // เพิ่ม category แบบ nullable
+  available   Boolean  @default(true)
+  image       String?  // เปลี่ยนเป็น nullable
+  description String?  // เพิ่ม description แบบ nullable
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum Role {
