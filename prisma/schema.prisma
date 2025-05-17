@@ -63,7 +63,7 @@ enum OrderStatus {
   PENDING
   PROCESSING
   READY
-  COMPLEATED
+  COMPLETED
 }
 
 enum PayStatus {
