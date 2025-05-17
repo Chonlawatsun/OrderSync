@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function HomePage() {
   const router = useRouter()
@@ -12,163 +13,148 @@ export default function HomePage() {
   const [adminPass, setAdminPass] = useState('')
 
   const handleCustomerSubmit = () => {
-  if (tableNumber && customerName) {
-    const query = new URLSearchParams({
-      name: customerName,
-      table: tableNumber,
-    }).toString()
-    router.push(`/menu?${query}`)
+    if (tableNumber && customerName) {
+      const query = new URLSearchParams({
+        name: customerName,
+        table: tableNumber,
+      }).toString()
+      router.push(`/menu?${query}`)
+    }
   }
-}
 
   const handleAdminLogin = async () => {
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: adminUser, password: adminPass }),
-    })
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: adminUser, password: adminPass }),
+      })
 
-    if (!res.ok) {
-      // พยายามอ่าน JSON เพื่อเอาข้อความ error
-      let errorMsg = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
-      try {
-        const errorData = await res.json()
-        errorMsg = errorData.message || errorMsg
-      } catch {
-        // ถ้าไม่มี JSON หรืออ่านไม่ออกก็ไม่เป็นไร
+      if (!res.ok) {
+        let errorMsg = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
+        try {
+          const errorData = await res.json()
+          errorMsg = errorData.message || errorMsg
+        } catch {}
+        alert(errorMsg)
+        return
       }
-      alert(errorMsg)
-      return
-    }
 
-    const data = await res.json()
+      const data = await res.json()
 
-    if (data.user.role === 'ADMIN') {
-      router.push('/admin')
-    } else if (data.role === 'STAFF') {
-      router.push('/WaitStaff')
-    } else {
-      alert('ไม่พบสิทธิ์การเข้าใช้งาน')
+      if (data.user.role === 'ADMIN') {
+        router.push('/admin')
+      } else if (data.role === 'STAFF') {
+        router.push('/WaitStaff')
+      } else {
+        alert('ไม่พบสิทธิ์การเข้าใช้งาน')
+      }
+    } catch (error) {
+      alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+      console.error(error)
     }
-  } catch (error) {
-    alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
-    console.error(error)
   }
-}
-
 
   return (
-    <main className="min-h-screen flex">
-      {/* Left: Background Image */}
-      <div className="w-1/2 bg-cover bg-center" style={{ backgroundImage: 'url(https://source.unsplash.com/800x600/?restaurant,food)' }}>
-        {/* แนะนำให้เปลี่ยน URL นี้เป็นรูปของคุณเองในภายหลัง */}
+    <main className="min-h-screen flex font-sans text-base md:text-lg">
+      {/* Left Section */}
+      <div className="w-1/2 relative">
+        <Image
+          src="/bgfirst.jpg"
+          alt="Restaurant Background"
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0  flex flex-col justify-center items-center text-white p-10">
+        </div>
       </div>
 
-      {/* Right: Content Area */}
-      <div className="w-1/2 flex flex-col justify-center items-center bg-[#f5f5f5] p-10">
-        <h1 className="text-4xl font-bold text-[#7e57c2] mb-8">ยินดีต้อนรับสู่ OrderSync</h1>
+      {/* Right Section */}
+      <div className="w-1/2 bg-white flex flex-col justify-center items-center p-14 relative">
+        <div className="w-full max-w-md">
+          <h2 className="text-3xl font-bold text-[#7e57c2] mb-2">Hello</h2>
+          <p className="mb-8 text-gray-600 text-lg">Welcome to <span className="font-bold text-[#7e57c2]">OrderSync</span></p>
 
-        {/* No role selected */}
-        {!role && (
-          <div className="flex gap-6">
-            <button
-              onClick={() => setRole('customer')}
-              className="px-6 py-3 bg-[#7e57c2] text-white rounded-lg hover:bg-purple-700 transition"
-            >
-              ลูกค้า
-            </button>
+          {!role && (
+            <div className="flex gap-6 mb-8">
+              <button
+                onClick={() => setRole('customer')}
+                className="flex-1 py-3 bg-[#7e57c2] text-white rounded-full hover:bg-purple-700 text-lg"
+              >
+                Customer
+              </button>
+              <button
+                onClick={() => setRole('admin')}
+                className="flex-1 py-3 bg-[#7e57c2] text-white rounded-full hover:bg-purple-700 text-lg"
+              >
+                Staff
+              </button>
+            </div>
+          )}
 
-            <button
-              onClick={() => setRole('admin')}
-              className="px-6 py-3 bg-[#7e57c2] text-white rounded-lg hover:bg-purple-700 transition"
-            >
-              พนักงานร้าน
-            </button>
-          </div>
-        )}
-
-        {/* Customer form */}
-        {role === 'customer' && (
-          <div className="w-full max-w-sm space-y-4">
-            <label className="block">
-              <span className="text-gray-700">ชื่อลูกค้า</span>
+          {role === 'customer' && (
+            <div className="space-y-5">
               <input
                 type="text"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"
-                placeholder="ชื่อลูกค้า"
+                className="w-full p-3 rounded-full border border-gray-300 focus:ring-2 focus:ring-[#7e57c2] text-lg"
+                placeholder="Customer Name"
               />
-            </label>
-
-            <label className="block">
-              <span className="text-gray-700">เลขโต๊ะ</span>
               <input
                 type="text"
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"
-                placeholder="เช่น 5"
+                className="w-full p-3 rounded-full border border-gray-300 focus:ring-2 focus:ring-[#7e57c2] text-lg"
+                placeholder="Table Number"
               />
-            </label>
+              <button
+                onClick={handleCustomerSubmit}
+                className="w-full py-3 bg-[#7e57c2] text-white rounded-full hover:bg-purple-700 text-lg"
+              >
+                Next
+              </button>
+              <button onClick={() => setRole(null)} className="w-full text-sm text-center text-gray-500 hover:underline">
+                go back
+              </button>
+            </div>
+          )}
 
-            <button
-              onClick={handleCustomerSubmit}
-              className="w-full bg-[#7e57c2] text-white py-2 rounded-md hover:bg-purple-700"
-            >
-              ต่อไป
-            </button>
-
-            <button
-              onClick={() => setRole(null)}
-              className="w-full text-sm text-gray-500 hover:underline"
-            >
-              กลับ
-            </button>
-          </div>
-        )}
-
-        {/* Admin login form */}
-        {role === 'admin' && (
-          <div className="w-full max-w-sm space-y-4">
-            <label className="block">
-              <span className="text-gray-700">ชื่อผู้ใช้</span>
+          {role === 'admin' && (
+            <div className="space-y-5">
               <input
                 type="text"
                 value={adminUser}
                 onChange={(e) => setAdminUser(e.target.value)}
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"
-                placeholder="admin"
+                className="w-full p-3 rounded-full border border-gray-300 focus:ring-2 focus:ring-[#7e57c2] text-lg"
+                placeholder="username"
               />
-            </label>
-
-            <label className="block">
-              <span className="text-gray-700">รหัสผ่าน</span>
               <input
                 type="password"
                 value={adminPass}
                 onChange={(e) => setAdminPass(e.target.value)}
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"
-                placeholder="รหัสผ่าน"
+                className="w-full p-3 rounded-full border border-gray-300 focus:ring-2 focus:ring-[#7e57c2] text-lg"
+                placeholder="password"
               />
-            </label>
+              <button
+                onClick={handleAdminLogin}
+                className="w-full py-3 bg-[#7e57c2] text-white rounded-full hover:bg-purple-700 text-lg"
+              >
+                Login
+              </button>
+              <button onClick={() => setRole(null)} className="w-full text-sm text-center text-gray-500 hover:underline">
+                go back
+              </button>
+            </div>
+          )}
 
-            <button
-              onClick={handleAdminLogin}
-              className="w-full bg-[#7e57c2] text-white py-2 rounded-md hover:bg-purple-700"
-            >
-              ล็อกอิน
-            </button>
-
-            <button
-              onClick={() => setRole(null)}
-              className="w-full text-sm text-gray-500 hover:underline"
-            >
-              กลับ
-            </button>
+          <div className="absolute bottom-6 right-6 text-right text-sm text-[#7e57c2]">
+            <div className="font-bold text-base">Name Restaurant</div>
+            <div className="flex items-center gap-1">
+              <span className="text-sm">📍</span> Your restaurant address
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </main>
   )
