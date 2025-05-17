@@ -48,3 +48,4 @@ export async function fetchMenuItems(): Promise<FoodItem[]> {
     return [];
   }
 }
+

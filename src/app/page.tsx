@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
@@ -12,13 +12,23 @@ export default function HomePage() {
   const [adminUser, setAdminUser] = useState('')
   const [adminPass, setAdminPass] = useState('')
 
+  useEffect(() => {
+    // ล้างค่าเมื่อเข้า /
+    localStorage.removeItem('customerName')
+    localStorage.removeItem('tableNumber')
+  }, [])
+
   const handleCustomerSubmit = () => {
     if (tableNumber && customerName) {
+      // เซ็ตค่าใหม่ใน localStorage
+      localStorage.setItem('customerName', customerName);
+      localStorage.setItem('tableNumber', tableNumber);
+
       const query = new URLSearchParams({
         name: customerName,
         table: tableNumber,
-      }).toString()
-      router.push(`/menu?${query}`)
+      }).toString();
+      router.push(`/menu?${query}`);
     }
   }
 

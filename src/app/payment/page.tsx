@@ -2,32 +2,34 @@
 
 import toast, { Toaster } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { fetchMenuItems } from '../data/menu'; // เปลี่ยนจาก menuItems เป็น fetchMenuItems
-import FoodCard from '../components/FoodCard';
-import type { FoodItem } from '../data/menu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { fetchOrders } from '../data/order'; // ดึง orders เหมือน order-status
 import Sidebar from '../components/Sidebar';
 
 export default function HomePage() {
-  const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
   const [filter, setFilter] = useState<string>('payable');
   const [selectedPayment, setSelectedPayment] = useState<string>('');
-  const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
+  const [customerName, setCustomerName] = useState('ลูกค้า');
+  const [tableNumber, setTableNumber] = useState('ไม่ระบุ');
+  const [orders, setOrders] = useState<any[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
   useEffect(() => {
-    fetchMenuItems().then(setMenuItems);
+    fetchOrders().then(setOrders);
   }, []);
 
-  // filter เมนูด้วย paystatus
-  const filteredItems = filter === 'All'
-    ? menuItems
-    : menuItems.filter(item => item.paystatus === filter);
+  useEffect(() => {
+    setCustomerName(localStorage.getItem('customerName') || 'ลูกค้า');
+    setTableNumber(localStorage.getItem('tableNumber') || 'ไม่ระบุ');
+  }, []);
 
-  // subtotal จาก paystatus ที่เลือก
-  const subtotal = menuItems
-    .filter(item => item.paystatus === filter)
-    .reduce((sum, item) => sum + item.price, 0);
+  const payStatusMap: Record<string, string> = {
+    UNPAID: 'payable',
+    PAID: 'paid',
+    CANCELLED: 'cancel',
+  };
+
+  // filter orders ตามปุ่มที่เลือก
+  const filteredOrders = orders.filter(order => payStatusMap[order.payStatus] === filter);
 
   const paymentMethods = [
     { label: 'QR Payment', img: '/promtpay.png' },
@@ -36,12 +38,12 @@ export default function HomePage() {
     { label: 'Cash', img: '/cash.png' },
   ];
 
-  function handleSelect(item: FoodItem) {
-    setSelectedItem(item);
+  function handleSelect(order: any) {
+    setSelectedOrder(order);
   }
 
   function handleCloseDetail() {
-    setSelectedItem(null);
+    setSelectedOrder(null);
   }
 
   function handleCheckout() {
@@ -58,37 +60,30 @@ export default function HomePage() {
       <Toaster />
       <div className="flex h-screen bg-gray-50">
         <Sidebar />
-        {/* Main content */}
-        <main className={`p-6 overflow-auto flex flex-col transition-all duration-300 ${selectedItem ? 'flex-1' : 'w-full'}`}>
+        <main className={`p-6 overflow-auto flex flex-col transition-all duration-300 ${selectedOrder ? 'flex-1' : 'w-full'}`}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-[#7e57c2]">Name Restaurant</h1>
-              <p className="text-gray-500 text-sm">Your restaurant address</p>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between mb-6 bg-white p-4 rounded-lg shadow-md">
+            <div className="mb-4 sm:mb-0">
+              <h1 className="text-3xl font-extrabold text-[#7e57c2]">Name Restaurant</h1>
+              <p className="text-gray-500 text-sm mt-1">Your restaurant address</p>
             </div>
-            <div className="flex flex-col items-end">
-              <span className="font-bold text-black">Customer</span>
-              <div className="flex items-top space-x-2 mt-1">
-                <img src="/customer-avatar.png" 
-                alt="Customer" 
+            <div className="flex items-center space-x-4 p-3">
+              <img
+                src="/customer-avatar.png"
+                alt="Customer"
                 width={56}
                 height={56}
-                className="-mt-6 rounded-full" />
-                <span className="text-black">Table : 00</span>
+                className="rounded-full border-2 border-[#7e57c2]"
+              />
+              <div className="flex flex-col text-right">
+                <span className="font-semibold text-[#5e35b1] text-lg">
+                  Name Customer : {customerName}
+                </span>
+                <span className="text-[#4527a0] font-medium mt-1">
+                  Table : {tableNumber}
+                </span>
               </div>
             </div>
-          </div>
-
-          {/* Search bar */}
-          <div className="mb-4 relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full px-4 py-2 text-black rounded border border-gray-300 focus:outline-none pl-10"
-            />
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <FontAwesomeIcon icon={faSearch} />
-            </span>
           </div>
 
           {/* Filter Menu */}
@@ -107,28 +102,46 @@ export default function HomePage() {
             >Cancel</button>
           </div>
 
-          {/* Food Menu */}
-          <div className={`grid gap-4 flex-1 items-start ${selectedItem ? 'grid-cols-4' : 'grid-cols-6'}`}>
-            {filteredItems.map(item => (
-              <FoodCard key={item.id} item={item} onSelect={handleSelect} />
+          {/* Order Card List */}
+          <div className={`grid gap-4 flex-1 items-start ${selectedOrder ? 'grid-cols-4' : 'grid-cols-6'}`}>
+            {filteredOrders.map(order => (
+              <div
+                key={order.id}
+                className="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:bg-purple-50"
+                onClick={() => handleSelect(order)}
+              >
+                {/* ถ้ามีรูปใน order หรือ order.items[0].menuItem.image */}
+                <img
+                  src={order.items?.[0]?.menuItem?.image ?? '/no-image.png'}
+                  alt={order.items?.[0]?.menuItem?.name ?? 'No image'}
+                  className="w-full h-32 object-cover rounded-md mb-2"
+                />
+                <div className="font-bold text-lg mb-1">
+                  {order.items?.[0]?.menuItem?.name ?? 'Order'}
+                </div>
+                <div>Price: {order.total}</div>
+                <div className="mt-1" style={{ color: order.payStatus === 'UNPAID' ? 'green' : order.payStatus === 'PAID' ? 'blue' : 'red' }}>
+                  {payStatusMap[order.payStatus]}
+                </div>
+              </div>
             ))}
           </div>
         </main>
 
         {/* Right: Payment Detail */}
-        {selectedItem && (
+        {selectedOrder && (
           <div className="w-1/3 bg-white p-6 border-l flex flex-col relative text-black">
             <button
-            className="absolute top-4 left-4 text-gray-400 hover:text-black text-2xl"
-            onClick={handleCloseDetail}
-            aria-label="Close"
-          >
-            &times;
-          </button>
+              className="absolute top-4 left-4 text-gray-400 hover:text-black text-2xl"
+              onClick={handleCloseDetail}
+              aria-label="Close"
+            >
+              &times;
+            </button>
             {/* Table & Order Number */}
             <div className="absolute top-6 right-6 text-right">
-              <div className="font-bold text-black text-xl">Table : 00</div>
-              <div className="font-bold text-gray-700 text-lg">Orders #34562</div>
+              <div className="font-bold text-black text-xl">Table : {selectedOrder.tableNumber}</div>
+              <div className="font-bold text-gray-700 text-lg">Orders #{selectedOrder.id.slice(0, 6)}</div>
             </div>
 
             <div className="flex-1 flex flex-col justify-start pt-20">
@@ -136,7 +149,7 @@ export default function HomePage() {
               <div className="mb-6">
                 <div className="flex justify-between mb-1">
                   <span>Subtotal</span>
-                  <span>{subtotal}</span>
+                  <span>{selectedOrder.total}</span>
                 </div>
                 <div className="flex justify-between mb-1">
                   <span>Discount</span>
@@ -153,7 +166,7 @@ export default function HomePage() {
                 <hr className="my-2 border-dashed" />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>0 Baht</span>
+                  <span>{selectedOrder.total} Baht</span>
                 </div>
               </div>
 

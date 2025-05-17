@@ -13,45 +13,48 @@ model User {
   password  String
   role      Role
   createdAt DateTime @default(now())
-
-  orders Order[]
+  orders    Order[]
 }
 
 model MenuItem {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
+  customerToken String?     
   name        String
   price       Int
   category    String?
-  available   Boolean  @default(true)
+  available   Boolean     @default(true)
   image       String?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  orderItems OrderItem[]
-}
-
-model Order {
-  id          String      @id @default(uuid())
-  user        User        @relation(fields: [userId], references: [id])
-  userId      String
-  tableNumber Int
-  status      OrderStatus @default(PENDING)
-  payStatus   PayStatus   @default(UNPAID)
-  total       Int
-  items       OrderItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
 }
 
-model OrderItem {
+model Order { 
+  id          String      @id @default(uuid())
+  userId      String?
+  tableNumber Int
+  status      OrderStatus @default(PENDING)
+  total       Int
+  note        String?     
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  payStatus   PayStatus   @default(UNPAID)
+  user        User?       @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+}
+
+model OrderItem { // -< Order แต่ละจาน
   id         String   @id @default(uuid())
-  order      Order    @relation(fields: [orderId], references: [id])
   orderId    String
-  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
   menuItemId String
   quantity   Int
   price      Int
+  note       String?
+  createdAt  DateTime @default(now())      
+  updatedAt  DateTime @updatedAt           
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  order      Order    @relation(fields: [orderId], references: [id])
 }
 
 enum Role {
