@@ -8,6 +8,9 @@ import { faSearch, faUser, faShoppingCart } from '@fortawesome/free-solid-svg-ic
 import Sidebar from '../components/Sidebar';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSearchParams } from 'next/navigation'
+import { submitOrder } from '../data/order';
+
+
 
 export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
@@ -16,14 +19,16 @@ export default function HomePage() {
   const [moreDetails, setMoreDetails] = useState<string>('');
   const [orders, setOrders] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const ordersPerPage = 5;
+  const ordersPerPage = 3; // เปลี่ยนตรงนี้
   const totalPages = Math.ceil(orders.length / ordersPerPage);
   const paginatedOrders = orders.slice((page - 1) * ordersPerPage, page * ordersPerPage);
   const searchParams = useSearchParams()
-  const customerName = searchParams.get('name') || 'ลูกค้า'
-  const tableNumber = searchParams.get('table') || 'ไม่ระบุ'
+  const [customerName, setCustomerName] = useState('ลูกค้า');
+  const [tableNumber, setTableNumber] = useState('ไม่ระบุ');
   const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
-
+  const [search, setSearch] = useState('');
+  
+  
   useEffect(() => {
     fetchMenuItems().then(setMenuItems);
   }, []);
@@ -34,9 +39,10 @@ export default function HomePage() {
     }
   }, [orders, page, ordersPerPage]);
 
-  const filteredItems = filter === 'All'
-    ? menuItems
-    : menuItems.filter(item => item.category === filter);
+  const filteredItems = menuItems.filter(item =>
+    (filter === 'All' || item.category === filter) &&
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   // Reset quantity when selectedItem changes
   function handleSelect(item: FoodItem) {
@@ -55,6 +61,7 @@ export default function HomePage() {
   function handleAdd() {
     if (!selectedItem) return;
     const newOrder = {
+      menuItemId: selectedItem.id, // เปลี่ยนจาก id: ... เป็น menuItemId: ...
       name: selectedItem.name,
       price: selectedItem.price,
       quantity,
@@ -65,16 +72,39 @@ export default function HomePage() {
     setMoreDetails('');
   }
 
-  function handleOrderNow() {
-    if (orders.length === 0) {
-      toast.error('Please add at least one order.');
-      return;
+  async function handleOrderNow() {
+    try {
+      // map moreDetails เป็น note ก่อนส่ง
+      const ordersWithNote = orders.map(order => ({
+        ...order,
+        note: order.moreDetails, // เพิ่ม note
+      }));
+
+      await submitOrder({
+        orders: ordersWithNote, 
+        userId: 'USER_ID',
+        tableNumber,
+      });
+      toast.success('Order submitted!');
+      setOrders([]);
+      setPage(1);
+    } catch (e) {
+      toast.error('Failed to submit order');
     }
-    console.log('Order submitted:', orders);
-    toast.success('Order submitted!');
-    setOrders([]);
-    setPage(1);
   }
+
+  useEffect(() => {
+    let customerToken = localStorage.getItem('customerToken');
+    if (!customerToken) {
+      customerToken = crypto.randomUUID();
+      localStorage.setItem('customerToken', customerToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    setCustomerName(localStorage.getItem('customerName') || 'ลูกค้า');
+    setTableNumber(localStorage.getItem('tableNumber') || 'ไม่ระบุ');
+  }, []);
 
   return (
     <>
@@ -111,6 +141,8 @@ export default function HomePage() {
             <input
               type="text"
               placeholder="Search..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
               className="w-full px-4 py-2 text-black rounded border border-gray-300 focus:outline-none pl-10"
             />
             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -178,7 +210,8 @@ export default function HomePage() {
                   type="text"
                   placeholder="More details"
                   value={moreDetails}
-                  onChange={e => setMoreDetails(e.target.value)}
+                  maxLength={20} // จำกัดความยาว
+                  onChange={e => setMoreDetails(e.target.value.slice(0, 20))} // ดักไม่ให้เกิน 20 ตัว
                   className="mt-6 w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none text-center enabled:text-black"
                 />
                 <button

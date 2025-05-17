@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     const name = formData.get('name')?.toString() || '';
     const price = parseFloat(formData.get('price')?.toString() || '0');
     const available = formData.get('available') === 'true';
+    const category = formData.get('category')?.toString() || null; // <<-- เพิ่มบรรทัดนี้
 
     const file = formData.get('image') as File | null;
     if (!file) {
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
         name,
         price,
         available,
+        category,
         image: `/uploads/${file.name}`,
       },
     });
